@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: kkmall-mq-consumer
+  cloud:
+    nacos:
+      config:
+        server-addr: ${SPRING_CLOUD_NACOS_CONFIG_SERVER_ADDR:}
+        namespace: ${SPRING_CLOUD_NACOS_CONFIG_NAMESPACE:}
+        username: ${SPRING_CLOUD_NACOS_CONFIG_USERNAME:}
+        password: ${SPRING_CLOUD_NACOS_CONFIG_PASSWORD:}
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        extension-configs:
+          - data-id: kkmall-mq-consumer-secret.yaml
+            group: DEFAULT_GROUP
+            refresh: false
