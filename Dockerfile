@@ -6,7 +6,7 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 RUN mvn clean package -DskipTests -B
 
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:21-jdk-alpine
 ARG ARTHAS_VERSION=4.1.8
 WORKDIR /app
 RUN apk add --no-cache wget curl bash unzip
