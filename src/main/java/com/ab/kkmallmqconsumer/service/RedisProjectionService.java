@@ -17,7 +17,6 @@ import java.time.format.DateTimeParseException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
@@ -64,17 +63,8 @@ public class RedisProjectionService {
             return;
         }
 
-        Map<String, Object> payload = new LinkedHashMap<>();
-        payload.put("id", id);
-        payload.put("db", firstNonBlank(rule.getDbName(), event.getDb()));
-        payload.put("table", firstNonBlank(rule.getTableName(), event.getTable()));
-        payload.put("topic", rule.getTopic());
-        payload.put("op", event.getOp());
-        payload.put("sourceType", "CDC");
+        Map<String, Object> payload = new LinkedHashMap<>(data);
         payload.put("version", incomingVersion);
-        payload.put("eventTime", event.getTsMs());
-        payload.put("updatedAt", System.currentTimeMillis());
-        payload.put("data", new LinkedHashMap<>(data));
 
         redisTemplate.opsForValue().set(dataKey, payload);
         if (rule.getValueTtlSeconds() != null && rule.getValueTtlSeconds() > 0) {
@@ -84,10 +74,6 @@ public class RedisProjectionService {
     }
 
     private boolean shouldWrite(String key, Long incomingVersion) {
-        if (!properties.getCache().isCompareBeforeWrite()) {
-            return true;
-        }
-
         Object existing = redisTemplate.opsForValue().get(key);
         if (!(existing instanceof Map<?, ?> existingMap)) {
             return true;
@@ -100,7 +86,7 @@ public class RedisProjectionService {
         if (incomingVersion == null) {
             return false;
         }
-        return incomingVersion >= currentVersion;
+        return incomingVersion > currentVersion;
     }
 
     private void delete(CdcTopicRule rule, Map<String, Object> before) {
@@ -158,6 +144,11 @@ public class RedisProjectionService {
     }
 
     private Long extractVersion(Map<String, Object> data, Long eventTsMs) {
+        Long entityVersion = toLong(data.get("version"));
+        if (entityVersion != null) {
+            return entityVersion;
+        }
+
         Object updateTime = data.get("update_time");
         if (updateTime == null) {
             updateTime = data.get("updateTime");
@@ -202,10 +193,4 @@ public class RedisProjectionService {
         }
     }
 
-    private String firstNonBlank(String preferred, String fallback) {
-        return StringUtils.hasText(preferred) ? preferred : fallback;
-    }
 }
-
-
-

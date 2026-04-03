@@ -34,19 +34,42 @@ class CdcMessageParserTests {
         String payload = """
                 {
                   "schema": {
-                    "type": "struct"
+                    "type": "struct",
+                    "fields": [
+                      {
+                        "field": "before",
+                        "type": "struct",
+                        "fields": [
+                          {"field": "id", "type": "int64"},
+                          {"field": "product_name", "type": "string"},
+                          {"field": "stock", "type": "int32"},
+                          {"field": "price", "type": "bytes", "name": "org.apache.kafka.connect.data.Decimal", "parameters": {"scale": "2"}}
+                        ]
+                      },
+                      {
+                        "field": "after",
+                        "type": "struct",
+                        "fields": [
+                          {"field": "id", "type": "int64"},
+                          {"field": "product_name", "type": "string"},
+                          {"field": "stock", "type": "int32"},
+                          {"field": "price", "type": "bytes", "name": "org.apache.kafka.connect.data.Decimal", "parameters": {"scale": "2"}}
+                        ]
+                      }
+                    ]
                   },
                   "payload": {
                     "before": {
                       "id": 804,
                       "product_name": "test",
-                      "stock": 22
+                      "stock": 22,
+                      "price": "AQ=="
                     },
                     "after": {
                       "id": 804,
                       "product_name": "test",
                       "stock": 223,
-                      "price": "AQ=="
+                      "price": "AV8s"
                     },
                     "source": {
                       "db": "kkmall-dev",
@@ -68,6 +91,6 @@ class CdcMessageParserTests {
         assertNotNull(event.getAfter());
         assertEquals(804, ((Number) event.getAfter().get("id")).intValue());
         assertEquals(223, ((Number) event.getAfter().get("stock")).intValue());
-        assertEquals("AQ==", event.getAfter().get("price"));
+        assertEquals("899.00", event.getAfter().get("price"));
     }
 }
