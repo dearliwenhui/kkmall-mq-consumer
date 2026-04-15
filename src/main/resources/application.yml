@@ -4,9 +4,9 @@ kkmall:
     env: ${KKMALL_ORDER_TIMEOUT_ENV:dev}
     enabled: ${KKMALL_ORDER_TIMEOUT_ENABLED:true}
     nameserver: ${KKMALL_ORDER_TIMEOUT_NAMESERVER:10.0.0.166:9876}
-    topic: ${KKMALL_ORDER_TIMEOUT_TOPIC:kkmall_order_timeout_dev}
+    topic: ${KKMALL_ORDER_TIMEOUT_TOPIC:kkmall_order_timeout}
     tag: ${KKMALL_ORDER_TIMEOUT_TAG:check}
-    consumer-group: ${KKMALL_ORDER_TIMEOUT_CONSUMER_GROUP:kkmall-mq-consumer-order-timeout-dev}
+    consumer-group: ${KKMALL_ORDER_TIMEOUT_CONSUMER_GROUP:kkmall-mq-consumer-order-timeout}
     consume-thread-min: ${KKMALL_ORDER_TIMEOUT_CONSUME_THREAD_MIN:1}
     consume-thread-max: ${KKMALL_ORDER_TIMEOUT_CONSUME_THREAD_MAX:4}
     mall-api-base-url: ${KKMALL_ORDER_TIMEOUT_MALL_API_BASE_URL:http://localhost:38081}
